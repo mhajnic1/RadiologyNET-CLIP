@@ -1,0 +1,15 @@
+# PATIENT DATA
+/data/
+
+notebooks/001-how-to.ipynb
+personalnotes.txt
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+checkpoints/*.pt
+checkpoints/*.pth
+results/logs/*
+results/figures/*
+!results/logs/.gitkeep
+!results/figures/.gitkeep

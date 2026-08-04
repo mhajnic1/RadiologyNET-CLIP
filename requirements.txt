@@ -1,0 +1,21 @@
+# PyTorch (CUDA 12.6 build — RTX 3060 detected)
+--extra-index-url https://download.pytorch.org/whl/cu126
+torch
+torchvision
+
+# CLIP / model backbones
+open_clip_torch
+transformers
+
+# data & training
+pandas
+numpy
+scikit-learn
+pillow
+tqdm
+pyyaml
+
+# notebooks
+jupyter
+ipykernel
+matplotlib
