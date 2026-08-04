@@ -1,8 +1,13 @@
-# PATIENT DATA
+# patient data, never commit this
 /data/
 
+# notebooks that show real diagnosis/image data need to be listed here too,
+# data/ alone doesn't cover their saved outputs
 notebooks/001-how-to.ipynb
+notebooks/002-data-exploration-and-filtering.ipynb
+
 personalnotes.txt
+.claude/
 venv/
 __pycache__/
 *.pyc
