@@ -5,6 +5,9 @@
 # data/ alone doesn't cover their saved outputs
 notebooks/001-how-to.ipynb
 notebooks/002-data-exploration-and-filtering.ipynb
+notebooks/003-translation-prep.ipynb
+notebooks/004-dataset-and-dataloader.ipynb
+notebooks/007-evaluation.ipynb
 
 personalnotes.txt
 .claude/
@@ -12,8 +15,8 @@ venv/
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
-checkpoints/*.pt
-checkpoints/*.pth
+checkpoints/**/*.pt
+checkpoints/**/*.pth
 results/logs/*
 results/figures/*
 !results/logs/.gitkeep
