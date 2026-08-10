@@ -1,0 +1,122 @@
+{
+  "note": "all three computed with deterministic first-slice eval, test split, identical pipeline",
+  "selection": "variants ranked on val Recall@10 only; only the winner (v2_head_lr) touched test",
+  "val_summary_file": "results/tuning/summary.json",
+  "zero_shot": {
+    "label": "zero-shot BiomedCLIP",
+    "checkpoint": "pretrained BiomedCLIP (no fine-tuning)",
+    "split": "test",
+    "n_images": 3046,
+    "text_to_image_recall": {
+      "1": 0.08008008008008008,
+      "5": 0.2222222222222222,
+      "10": 0.3333333333333333
+    },
+    "text_to_image_n_queries": 999,
+    "text_to_image_random_baseline": {
+      "1": 0.00032829940906106366,
+      "5": 0.0016414970453053185,
+      "10": 0.003282994090610637
+    },
+    "image_to_text_recall": {
+      "1": 0.060407091267235716,
+      "5": 0.23079448456992777,
+      "10": 0.3722915298752462
+    },
+    "image_to_text_n_queries": 3046,
+    "image_to_text_random_baseline": {
+      "1": 0.001001001001001001,
+      "5": 0.005005005005005005,
+      "10": 0.01001001001001001
+    },
+    "recall_score": 0.35281243160428977,
+    "clustering_image_embeds": {
+      "ari": 0.7187792071089986,
+      "nmi": 0.7760685493509969,
+      "n_clusters": 5
+    },
+    "clustering_text_embeds": {
+      "ari": 0.6986851977980773,
+      "nmi": 0.8183274760380224,
+      "n_clusters": 5
+    }
+  },
+  "phase6_7_checkpoint": {
+    "label": "checkpoints/best.pt",
+    "checkpoint": "checkpoints/best.pt",
+    "split": "test",
+    "n_images": 3046,
+    "text_to_image_recall": {
+      "1": 0.1001001001001001,
+      "5": 0.3003003003003003,
+      "10": 0.44144144144144143
+    },
+    "text_to_image_n_queries": 999,
+    "text_to_image_random_baseline": {
+      "1": 0.00032829940906106366,
+      "5": 0.0016414970453053185,
+      "10": 0.003282994090610637
+    },
+    "image_to_text_recall": {
+      "1": 0.10242941562705186,
+      "5": 0.3634274458305975,
+      "10": 0.5610636900853578
+    },
+    "image_to_text_n_queries": 3046,
+    "image_to_text_random_baseline": {
+      "1": 0.001001001001001001,
+      "5": 0.005005005005005005,
+      "10": 0.01001001001001001
+    },
+    "recall_score": 0.5012525657633996,
+    "clustering_image_embeds": {
+      "ari": 0.6659897865077968,
+      "nmi": 0.7977105615614167,
+      "n_clusters": 5
+    },
+    "clustering_text_embeds": {
+      "ari": 0.8597334315490707,
+      "nmi": 0.8897329450627512,
+      "n_clusters": 5
+    }
+  },
+  "phase9_winner_v2_head_lr": {
+    "label": "checkpoints/tuning/v2_head_lr.pt",
+    "checkpoint": "checkpoints/tuning/v2_head_lr.pt",
+    "split": "test",
+    "n_images": 3046,
+    "text_to_image_recall": {
+      "1": 0.10810810810810811,
+      "5": 0.3113113113113113,
+      "10": 0.45245245245245247
+    },
+    "text_to_image_n_queries": 999,
+    "text_to_image_random_baseline": {
+      "1": 0.00032829940906106366,
+      "5": 0.0016414970453053185,
+      "10": 0.003282994090610637
+    },
+    "image_to_text_recall": {
+      "1": 0.11260669730794484,
+      "5": 0.3857518056467498,
+      "10": 0.572554169402495
+    },
+    "image_to_text_n_queries": 3046,
+    "image_to_text_random_baseline": {
+      "1": 0.001001001001001001,
+      "5": 0.005005005005005005,
+      "10": 0.01001001001001001
+    },
+    "recall_score": 0.5125033109274737,
+    "clustering_image_embeds": {
+      "ari": 0.700240640792974,
+      "nmi": 0.8146101491273382,
+      "n_clusters": 5
+    },
+    "clustering_text_embeds": {
+      "ari": 0.6587327819228984,
+      "nmi": 0.7817846514464798,
+      "n_clusters": 5
+    }
+  }
+}

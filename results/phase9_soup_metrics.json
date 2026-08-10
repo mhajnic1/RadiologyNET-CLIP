@@ -1,0 +1,39 @@
+{
+  "label": "checkpoints/tuning/soup_v1v2v4.pt",
+  "checkpoint": "checkpoints/tuning/soup_v1v2v4.pt",
+  "split": "test",
+  "n_images": 3046,
+  "text_to_image_recall": {
+    "1": 0.1041041041041041,
+    "5": 0.3123123123123123,
+    "10": 0.4344344344344344
+  },
+  "text_to_image_n_queries": 999,
+  "text_to_image_random_baseline": {
+    "1": 0.00032829940906106366,
+    "5": 0.0016414970453053185,
+    "10": 0.003282994090610637
+  },
+  "image_to_text_recall": {
+    "1": 0.11720288903479974,
+    "5": 0.3798424162836507,
+    "10": 0.5695994747209455
+  },
+  "image_to_text_n_queries": 3046,
+  "image_to_text_random_baseline": {
+    "1": 0.001001001001001001,
+    "5": 0.005005005005005005,
+    "10": 0.01001001001001001
+  },
+  "recall_score": 0.50201695457769,
+  "clustering_image_embeds": {
+    "ari": 0.6728685433375531,
+    "nmi": 0.8078342448914141,
+    "n_clusters": 5
+  },
+  "clustering_text_embeds": {
+    "ari": 0.8464199071498824,
+    "nmi": 0.8819347895922722,
+    "n_clusters": 5
+  }
+}

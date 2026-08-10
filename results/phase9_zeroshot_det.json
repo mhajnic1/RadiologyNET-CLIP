@@ -1,0 +1,39 @@
+{
+  "label": "zero-shot BiomedCLIP",
+  "checkpoint": "pretrained BiomedCLIP (no fine-tuning)",
+  "split": "test",
+  "n_images": 3046,
+  "text_to_image_recall": {
+    "1": 0.08008008008008008,
+    "5": 0.2222222222222222,
+    "10": 0.3333333333333333
+  },
+  "text_to_image_n_queries": 999,
+  "text_to_image_random_baseline": {
+    "1": 0.00032829940906106366,
+    "5": 0.0016414970453053185,
+    "10": 0.003282994090610637
+  },
+  "image_to_text_recall": {
+    "1": 0.060407091267235716,
+    "5": 0.23079448456992777,
+    "10": 0.3722915298752462
+  },
+  "image_to_text_n_queries": 3046,
+  "image_to_text_random_baseline": {
+    "1": 0.001001001001001001,
+    "5": 0.005005005005005005,
+    "10": 0.01001001001001001
+  },
+  "recall_score": 0.35281243160428977,
+  "clustering_image_embeds": {
+    "ari": 0.7187792071089986,
+    "nmi": 0.7760685493509969,
+    "n_clusters": 5
+  },
+  "clustering_text_embeds": {
+    "ari": 0.6986851977980773,
+    "nmi": 0.8183274760380224,
+    "n_clusters": 5
+  }
+}
