@@ -4,22 +4,34 @@ Retrieval of radiological images from diagnosis text, using CLIP-style contrasti
 
 Undergraduate thesis project. Croatian title: *Dohvat radioloških slika temeljem dijagnoza korištenjem CLIP neuronskih mreža*.
 
-Given a radiological diagnosis, the model retrieves the image it corresponds to, and the reverse. It is built by fine-tuning [BiomedCLIP](https://huggingface.co/microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224) on the RadiologyNET dataset, collected during standard clinical practice at KBC Rijeka, covering five modalities (CR, CT, MR, RF, XA).
+Given a radiological diagnosis, the model retrieves the image it corresponds to. It is built by fine-tuning [BiomedCLIP](https://huggingface.co/microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224) on the RadiologyNET dataset, collected during standard clinical practice at KBC Rijeka, covering five modalities (CR, CT, MR, RF, XA).
 
 ---
 
 ## Results
 
-Test split, 3046 images from 999 unique diagnoses, never used for training or model selection.
+The task is diagnosis to image retrieval. Test split, 3046 images from 999 unique diagnoses, never used for training or model selection.
 
-| model | text to image R@10 | image to text R@10 | combined |
+| model | Recall@1 | Recall@5 | Recall@10 |
 |---|---|---|---|
-| random chance | 0.3% | 1.0% | - |
-| zero-shot BiomedCLIP | 33.3% | 37.2% | 0.3528 |
-| fine-tuned (first pass) | 44.1% | 56.1% | 0.5013 |
-| fine-tuned (final) | **45.2%** | **57.3%** | **0.5125** |
+| random chance | 0.03% | 0.2% | 0.3% |
+| zero-shot BiomedCLIP | 8.0% | 22.2% | 33.3% |
+| fine-tuned (first pass) | 10.0% | 30.0% | 44.1% |
+| fine-tuned (final) | **10.8%** | **31.1%** | **45.2%** |
 
-The final model retrieves a correct image in its top 10 out of 3046 candidates about 45% of the time, roughly 138x better than chance. Fine-tuning accounts for a gain of 11.9 and 20.0 percentage points over the zero-shot baseline, which at 5.5 and 16.0 standard errors is the only intervention in the project that produced a statistically solid improvement.
+The final model retrieves a correct image in its top 10 out of 3046 candidates about 45% of the time, roughly 138x better than chance. Fine-tuning accounts for +11.9 percentage points over the zero-shot baseline at Recall@10, which at 5.5 standard errors is the only intervention in this project that produced a statistically solid improvement.
+
+### Image to text, as a check on the above
+
+CLIP's loss is symmetric, so the same training produces the reverse direction for free. It is not the task and there is no clinical use for it here, but it is a useful independent test of the central claim, which is that fine-tuning built a genuinely aligned shared embedding space rather than something that only works one way.
+
+| model | image to text R@10 |
+|---|---|
+| random chance | 1.0% |
+| zero-shot BiomedCLIP | 37.2% |
+| fine-tuned (final) | 57.3% |
+
+Both directions improve, and the improvement is larger and far more significant in this one (+20.0 points at 16.0 standard errors, against +11.9 at 5.5) despite it never being the target. That is the corroboration: the alignment holds symmetrically, so the gain on the actual task is not an artefact of one direction.
 
 Full numbers, including clustering metrics and every intermediate model, live in `results/phase9_comparison.json`. **That file is the canonical source.** Earlier files (`results/phase7_metrics.json`, `results/phase8_metrics.json`) were computed before a slice-selection bug was fixed in phase 9 and their clustering figures are not reproducible as written.
 
