@@ -1,0 +1,41 @@
+{
+  "label": "zero-shot original CLIP (ViT-B-16-quickgelu, openai)",
+  "checkpoint": "pretrained original CLIP (ViT-B-16-quickgelu, openai) (no fine-tuning)",
+  "base_model": "clip",
+  "text_column": "DIAGNOSIS_TRUNCATED_77",
+  "split": "test",
+  "n_images": 3046,
+  "text_to_image_recall": {
+    "1": 0.01603206412825651,
+    "5": 0.04909819639278557,
+    "10": 0.08016032064128256
+  },
+  "text_to_image_n_queries": 998,
+  "text_to_image_random_baseline": {
+    "1": 0.00032829940906106366,
+    "5": 0.0016414970453053185,
+    "10": 0.003282994090610637
+  },
+  "image_to_text_recall": {
+    "1": 0.020026263952724884,
+    "5": 0.07550886408404466,
+    "10": 0.11621799080761655
+  },
+  "image_to_text_n_queries": 3046,
+  "image_to_text_random_baseline": {
+    "1": 0.001002004008016032,
+    "5": 0.00501002004008016,
+    "10": 0.01002004008016032
+  },
+  "recall_score": 0.09818915572444956,
+  "clustering_image_embeds": {
+    "ari": 0.264499934641708,
+    "nmi": 0.38294724633102506,
+    "n_clusters": 5
+  },
+  "clustering_text_embeds": {
+    "ari": 0.3461346931148825,
+    "nmi": 0.44040620977753286,
+    "n_clusters": 5
+  }
+}

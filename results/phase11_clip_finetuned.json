@@ -1,0 +1,41 @@
+{
+  "label": "checkpoints/tuning/clip_finetuned.pt",
+  "checkpoint": "checkpoints/tuning/clip_finetuned.pt",
+  "base_model": "clip",
+  "text_column": "DIAGNOSIS_TRUNCATED_77",
+  "split": "test",
+  "n_images": 3046,
+  "text_to_image_recall": {
+    "1": 0.07214428857715431,
+    "5": 0.24549098196392785,
+    "10": 0.3907815631262525
+  },
+  "text_to_image_n_queries": 998,
+  "text_to_image_random_baseline": {
+    "1": 0.00032829940906106366,
+    "5": 0.0016414970453053185,
+    "10": 0.003282994090610637
+  },
+  "image_to_text_recall": {
+    "1": 0.08896913985554826,
+    "5": 0.3102429415627052,
+    "10": 0.510505581089954
+  },
+  "image_to_text_n_queries": 3046,
+  "image_to_text_random_baseline": {
+    "1": 0.001002004008016032,
+    "5": 0.00501002004008016,
+    "10": 0.01002004008016032
+  },
+  "recall_score": 0.45064357210810324,
+  "clustering_image_embeds": {
+    "ari": 0.848737054385759,
+    "nmi": 0.8506058475227914,
+    "n_clusters": 5
+  },
+  "clustering_text_embeds": {
+    "ari": 0.6447774150471038,
+    "nmi": 0.7365550312121033,
+    "n_clusters": 5
+  }
+}

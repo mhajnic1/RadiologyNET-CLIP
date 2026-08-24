@@ -1,0 +1,41 @@
+{
+  "label": "checkpoints/tuning/v1_baseline.pt",
+  "checkpoint": "checkpoints/tuning/v1_baseline.pt",
+  "base_model": "biomedclip",
+  "text_column": "DIAGNOSIS_TRUNCATED",
+  "split": "test",
+  "n_images": 3046,
+  "text_to_image_recall": {
+    "1": 0.1011011011011011,
+    "5": 0.2912912912912913,
+    "10": 0.43843843843843844
+  },
+  "text_to_image_n_queries": 999,
+  "text_to_image_random_baseline": {
+    "1": 0.00032829940906106366,
+    "5": 0.0016414970453053185,
+    "10": 0.003282994090610637
+  },
+  "image_to_text_recall": {
+    "1": 0.11063690085357847,
+    "5": 0.36441234405778067,
+    "10": 0.5663164806303349
+  },
+  "image_to_text_n_queries": 3046,
+  "image_to_text_random_baseline": {
+    "1": 0.001001001001001001,
+    "5": 0.005005005005005005,
+    "10": 0.01001001001001001
+  },
+  "recall_score": 0.5023774595343866,
+  "clustering_image_embeds": {
+    "ari": 0.5520872659605512,
+    "nmi": 0.701931550793975,
+    "n_clusters": 5
+  },
+  "clustering_text_embeds": {
+    "ari": 0.6885507476494387,
+    "nmi": 0.7952560755300526,
+    "n_clusters": 5
+  }
+}
