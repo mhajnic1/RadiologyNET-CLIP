@@ -1,13 +1,10 @@
 # patient data, never commit this
 /data/
 
-# notebooks that show real diagnosis/image data need to be listed here too,
-# data/ alone doesn't cover their saved outputs
-notebooks/001-how-to.ipynb
-notebooks/002-data-exploration-and-filtering.ipynb
-notebooks/003-translation-prep.ipynb
-notebooks/004-dataset-and-dataloader.ipynb
-notebooks/007-evaluation.ipynb
+# keeping every notebook out of the repo for now. some of them show real diagnosis
+# text or images and data/ alone doesn't cover their saved outputs, so this is the
+# blanket version rather than listing them one by one. notebooks/util.py stays.
+notebooks/*.ipynb
 
 personalnotes.txt
 .claude/
