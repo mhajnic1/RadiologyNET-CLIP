@@ -7,8 +7,12 @@ from src.data.dataset import RadiologyNETDataset
 from src.models.biomedclip import load_biomedclip
 
 
-def load_trained_model(checkpoint_path='checkpoints/best.pt'):
-    model, _, preprocess_val, tokenizer = load_biomedclip()
+def load_trained_model(checkpoint_path='checkpoints/best.pt', base_model='biomedclip'):
+    if base_model == 'clip':
+        from src.models.original_clip import load_original_clip
+        model, _, preprocess_val, tokenizer = load_original_clip()
+    else:
+        model, _, preprocess_val, tokenizer = load_biomedclip()
     ckpt = torch.load(checkpoint_path, map_location='cpu', weights_only=False)
     state = ckpt['model_state_dict']
 
@@ -32,13 +36,22 @@ def load_zeroshot_model():
     return model, preprocess_val, tokenizer
 
 
+def load_zeroshot_original_clip():
+    # the general-purpose CLIP openai released, no medical pretraining and no
+    # fine-tuning. the other end of the comparison from BiomedCLIP
+    from src.models.original_clip import load_original_clip
+    model, _, preprocess_val, tokenizer = load_original_clip()
+    model = model.cuda().eval()
+    return model, preprocess_val, tokenizer
+
+
 @torch.no_grad()
 def compute_split_embeddings(split, model, preprocess_val, tokenizer,
                               data_root='data', images_root='data/images', batch_size=96,
-                              num_workers=0):
+                              num_workers=0, text_column='DIAGNOSIS_TRUNCATED'):
     ds = RadiologyNETDataset(split=split, data_root=data_root, images_root=images_root,
                               tokenizer=tokenizer, image_transform=preprocess_val,
-                              random_slice=False)
+                              random_slice=False, text_column=text_column)
     loader = DataLoader(ds, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     image_embeds = []
@@ -60,7 +73,8 @@ def compute_split_embeddings(split, model, preprocess_val, tokenizer,
 
 def get_split_embeddings(split, model, preprocess_val, tokenizer, cache_name,
                           data_root='data', images_root='data/images', batch_size=96,
-                          cache_dir='data/embeddings'):
+                          cache_dir='data/embeddings',
+                          text_column='DIAGNOSIS_TRUNCATED'):
     # cached under data/, not results/, since these are derived from real diagnosis
     # text and images, same sensitivity as the rest of data/
     cache_path = os.path.join(cache_dir, f'{cache_name}_{split}.pt')
@@ -69,7 +83,8 @@ def get_split_embeddings(split, model, preprocess_val, tokenizer, cache_name,
         return cached['image_embeds'], cached['text_embeds'], cached['metadata']
 
     image_embeds, text_embeds, metadata = compute_split_embeddings(
-        split, model, preprocess_val, tokenizer, data_root, images_root, batch_size
+        split, model, preprocess_val, tokenizer, data_root, images_root, batch_size,
+        text_column=text_column,
     )
     os.makedirs(cache_dir, exist_ok=True)
     torch.save({'image_embeds': image_embeds, 'text_embeds': text_embeds, 'metadata': metadata}, cache_path)
