@@ -16,17 +16,26 @@ class RadiologyNETDataset(Dataset):
     # spot two rows in a batch that share identical text and stop treating them as
     # negatives of each other. off by default so the eval code keeps its 2-tuple
     def __init__(self, split, data_root, images_root, tokenizer, image_transform,
-                 random_slice=True, return_text_group=False):
+                 random_slice=True, return_text_group=False,
+                 text_column='DIAGNOSIS_TRUNCATED'):
         splits = pd.read_csv(os.path.join(data_root, 'splits.csv'))
-        exam_ids = set(splits[splits.split == split].ExamID)
-
         metainfo = pd.read_csv(os.path.join(data_root, 'metainformation.csv'), index_col='id')
-        metainfo = metainfo[metainfo.ExamID.isin(exam_ids)]
 
+        # split=None means every row, which the demo app needs so it can search the
+        # whole dataset. the split label is kept as a column either way so callers
+        # can still tell train/val/test apart
+        if split is not None:
+            exam_ids = set(splits[splits.split == split].ExamID)
+            metainfo = metainfo[metainfo.ExamID.isin(exam_ids)]
+
+        # text_column picks which truncation to feed the model, since the original CLIP
+        # only has 77 tokens against BiomedCLIP's 256 and needs its own. always exposed
+        # downstream as DIAGNOSIS_TRUNCATED so the evaluation code stays unchanged
         diagnoses = pd.read_csv(os.path.join(data_root, 'diagnoses_final.csv'), encoding='utf-8-sig')
-        diagnoses = diagnoses.set_index('ExamID').DIAGNOSIS_TRUNCATED
+        diagnoses = diagnoses.set_index('ExamID')[text_column].rename('DIAGNOSIS_TRUNCATED')
 
         self.rows = metainfo.join(diagnoses, on='ExamID')
+        self.rows['split'] = metainfo.ExamID.map(splits.set_index('ExamID').split)
         self.images_root = images_root
         self.tokenizer = tokenizer
         self.image_transform = image_transform

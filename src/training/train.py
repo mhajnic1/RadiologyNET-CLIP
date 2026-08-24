@@ -10,12 +10,29 @@ from torch.utils.data import DataLoader
 from src.data.dataset import RadiologyNETDataset
 from src.data.sampler import ModalityBatchSampler
 from src.evaluation.validate import recall_score
-from src.models.biomedclip import load_biomedclip, set_freeze_mode
+from src.models import biomedclip, original_clip
 from src.training.losses import MaskedClipLoss
 from src.training.scheduler import cosine_lr_with_warmup
 
 clip_loss = ClipLoss()
 masked_clip_loss = MaskedClipLoss()
+
+# the two towers live at different attribute paths in each model, so the loader, the
+# freeze logic and the backbone name matching all have to switch together
+BASE_MODELS = {
+    'biomedclip': {
+        'load': biomedclip.load_biomedclip,
+        'freeze': biomedclip.set_freeze_mode,
+        'backbone_prefixes': ('visual.trunk', 'text.transformer'),
+        'text_column': 'DIAGNOSIS_TRUNCATED',
+    },
+    'clip': {
+        'load': original_clip.load_original_clip,
+        'freeze': original_clip.set_freeze_mode,
+        'backbone_prefixes': original_clip.BACKBONE_PREFIXES,
+        'text_column': 'DIAGNOSIS_TRUNCATED_77',
+    },
+}
 
 
 def clamp_logit_scale(model):
@@ -23,7 +40,8 @@ def clamp_logit_scale(model):
         model.logit_scale.clamp_(0, math.log(100))
 
 
-def build_param_groups(model, base_lr, weight_decay, head_lr_mult=1.0):
+def build_param_groups(model, base_lr, weight_decay, head_lr_mult=1.0,
+                       backbone_prefixes=('visual.trunk', 'text.transformer')):
     # two things going on here:
     # 1. open_clip's own training script skips weight decay on 1d params (norms, biases,
     #    logit_scale) - decaying those regularises nothing and just fights the model
@@ -40,7 +58,7 @@ def build_param_groups(model, base_lr, weight_decay, head_lr_mult=1.0):
             # the learned temperature stays on the base lr, open_clip never gives it a
             # multiplier and a 10x on one scalar is an easy way to destabilise the loss
             where = 'logit_scale'
-        elif 'visual.trunk' in name or 'text.transformer' in name:
+        elif any(name.startswith(p) or f'.{p}' in name for p in backbone_prefixes):
             where = 'backbone'
         else:
             where = 'head'
@@ -138,20 +156,25 @@ def train(
     head_lr_mult=1.0, grad_checkpointing=False, num_workers=4,
     checkpoint_path='checkpoints/best.pt', patience=5,
     max_steps=None, select_on='recall', history_path=None,
-    mask_false_negatives=False, hard_negatives=None,
+    mask_false_negatives=False, hard_negatives=None, base_model='biomedclip',
 ):
-    model, preprocess_train, preprocess_val, tokenizer = load_biomedclip()
-    set_freeze_mode(model, freeze_mode, n_unfrozen_blocks)
+    spec = BASE_MODELS[base_model]
+    text_column = spec['text_column']
+    print(f"base model: {base_model}, text column: {text_column}", flush=True)
+
+    model, preprocess_train, preprocess_val, tokenizer = spec['load']()
+    spec['freeze'](model, freeze_mode, n_unfrozen_blocks)
     if grad_checkpointing:
         model.set_grad_checkpointing(True)
     model = model.cuda()
 
     train_ds = RadiologyNETDataset(split='train', data_root=data_root, images_root=images_root,
                                     tokenizer=tokenizer, image_transform=preprocess_train,
-                                    return_text_group=mask_false_negatives)
+                                    return_text_group=mask_false_negatives,
+                                    text_column=text_column)
     val_ds = RadiologyNETDataset(split='val', data_root=data_root, images_root=images_root,
                                   tokenizer=tokenizer, image_transform=preprocess_val,
-                                  random_slice=False)
+                                  random_slice=False, text_column=text_column)
     val_metadata = val_ds.rows.reset_index().rename(columns={'index': 'id'})
 
     train_kwargs = dict(num_workers=num_workers)
@@ -176,7 +199,8 @@ def train(
     # the disk mid-run, which is what killed v2 the first time round
     val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=0)
 
-    param_groups = build_param_groups(model, base_lr, weight_decay, head_lr_mult)
+    param_groups = build_param_groups(model, base_lr, weight_decay, head_lr_mult,
+                                      spec['backbone_prefixes'])
     for g in param_groups:
         n = sum(p.numel() for p in g['params'])
         print(f"param group {g['group_name']}: {n:,} params, lr={g['lr']:.2e}, wd={g['weight_decay']}", flush=True)
