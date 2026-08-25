@@ -7,6 +7,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 from src.data.paths import get_image_dir, list_slices
+from src.evaluation.plotstyle import save_figure
 
 
 def pick_examples(image_embeds, text_embeds, metadata, n_hits=2, n_misses=2, k=5, seed=42):
@@ -75,8 +76,7 @@ def render_labelled_examples(rows, metadata, images_root, out_path, k=5, wrap_wi
         )
 
     plt.tight_layout()
-    plt.savefig(out_path, dpi=120, bbox_inches='tight')
-    plt.close(fig)
+    save_figure(fig, os.path.basename(out_path), os.path.dirname(out_path) or '.')
 
 
 def render_examples(examples, metadata, images_root, out_path, k=5, wrap_width=140):
@@ -117,5 +117,4 @@ def render_examples(examples, metadata, images_root, out_path, k=5, wrap_width=1
         )
 
     plt.tight_layout()
-    plt.savefig(out_path, dpi=120, bbox_inches='tight')
-    plt.close(fig)
+    save_figure(fig, os.path.basename(out_path), os.path.dirname(out_path) or '.')
