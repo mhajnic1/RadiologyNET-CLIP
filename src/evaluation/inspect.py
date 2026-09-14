@@ -79,7 +79,57 @@ def render_labelled_examples(rows, metadata, images_root, out_path, k=5, wrap_wi
     save_figure(fig, os.path.basename(out_path), os.path.dirname(out_path) or '.')
 
 
-def render_examples(examples, metadata, images_root, out_path, k=5, wrap_width=140):
+def _one_example(example, metadata, images_root, k, wrap_width):
+    """One query and its top k, sized to the length of that query alone.
+
+    The whole point of building it per query is the height: a shared figure has to
+    make every row as tall as the longest report, which leaves the short ones
+    sitting in a lot of white space.
+    """
+    query_idx, ranked, correct = example
+    text = textwrap.fill(f"Q: {metadata.iloc[query_idx].DIAGNOSIS_TRUNCATED}",
+                         width=wrap_width)
+    lines = text.count('\n') + 1
+
+    text_h = 0.16 * lines + 0.08          # inches the query block needs
+    fig_h = 2.95 + text_h
+    fig, axes = plt.subplots(1, k, figsize=(k * 2.5, fig_h))
+
+    for col in range(k):
+        img_idx = ranked[col]
+        m = metadata.iloc[img_idx]
+        folder = get_image_dir(images_root, m.id, m.Modality)
+        slices = list_slices(images_root, m.id, m.Modality)
+        img = Image.open(os.path.join(folder, slices[0])).convert('RGB')
+
+        ax = axes[col]
+        ax.imshow(img)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        border = 'limegreen' if img_idx in correct else 'red'
+        for spine in ax.spines.values():
+            spine.set_edgecolor(border)
+            spine.set_linewidth(4)
+        ax.set_xlabel(f"rank {col+1}\n{m.Modality}", fontsize=7)
+
+    # the query hangs above the axes, which tight_layout does not measure, so the
+    # room for it is reserved by hand
+    fig.tight_layout(rect=[0, 0, 1, 1 - text_h / fig_h], pad=0.6)
+    fig.text(0.008, 1 - 0.05 / fig_h, text, fontsize=8.5, ha='left', va='top',
+             linespacing=1.25)
+    return fig
+
+
+def render_examples(examples, metadata, images_root, out_path, k=5, wrap_width=140,
+                    split=False):
+    if split:
+        base, ext = os.path.splitext(os.path.basename(out_path))
+        out_dir = os.path.dirname(out_path) or '.'
+        for i, ex in enumerate(examples, 1):
+            fig = _one_example(ex, metadata, images_root, k, wrap_width)
+            save_figure(fig, f'{base}_{i}{ext}', out_dir)
+        return
+
     n = len(examples)
 
     wrapped_queries = []

@@ -106,6 +106,13 @@ Compare tuning variants with error bars:
 python -m src.evaluation.compare_variants
 ```
 
+Run the web app:
+
+```bash
+python -m src.app.build_gallery
+python app.py
+```
+
 ---
 
 ## Method in brief
@@ -119,8 +126,6 @@ python -m src.evaluation.compare_variants
 ---
 
 ## Notes and caveats
-
-The dataset and any notebook whose output displays real diagnosis text or images are excluded from this repository. That covers notebooks 001 to 004 and 007, so the documentation trail here has gaps at data exploration and evaluation.
 
 Validation loss and retrieval quality diverge on this dataset. Loss bottoms out around epoch 3 while Recall@10 keeps improving to epoch 6, so checkpoints are selected on retrieval, not loss. Selecting on loss costs roughly 1.7 points of Recall@10.
 

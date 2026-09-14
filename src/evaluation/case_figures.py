@@ -220,17 +220,19 @@ def fig_boilerplate_miss(k=5, out='case_boilerplate_miss.png'):
             sp.set_linewidth(3.5)
         ax.set_xlabel(f'{m.Modality}   {sims[r]:.3f}', fontsize=8)
 
-    query = textwrap.fill('Query: ' + str(meta.iloc[qrow].DIAGNOSIS_TRUNCATED), width=110)
+    # wrapped narrower than the panel is wide so the bigger type still fits on one
+    # figure width. at 12 pt about 95 characters is what the 11.5 inches hold
+    query = textwrap.fill('Query: ' + str(meta.iloc[qrow].DIAGNOSIS_TRUNCATED), width=95)
     fig.suptitle(query + '\n\nAll five are plausible answers, none is the one exact '
                          'text match, so all count as wrong',
-                 fontsize=9, y=1.06)
+                 fontsize=12, y=1.02)
     fig.tight_layout()
     _save(fig, out)
 
 
 # --------------------------------------------------------------------------- E
 
-def fig_manual_inspection(seed=42, out=None):
+def fig_manual_inspection(seed=42, out=None, split=False):
     """The qualitative check from phase 7: two hits and two misses, top 5 each.
 
     Regenerated against v2_head_lr with deterministic first-slice selection. The
@@ -243,7 +245,8 @@ def fig_manual_inspection(seed=42, out=None):
     img, txt, meta = _load(FT)
     hits, misses = pick_examples(img, txt, meta, n_hits=2, n_misses=2, k=5, seed=seed)
     print(f'  seed {seed}: {len(hits)} hits + {len(misses)} misses')
-    render_examples(hits + misses, meta, 'data/images', os.path.join(OUT_DIR, out), k=5)
+    render_examples(hits + misses, meta, 'data/images', os.path.join(OUT_DIR, out),
+                    k=5, split=split)
 
 
 # --------------------------------------------------------------------------- F
